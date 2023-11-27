@@ -1,0 +1,29 @@
+.main-header {
+    width: 100%;
+    height: 50px;
+    background: #126577;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #ffffff;
+}
+
+.header-btn {
+    outline: none;
+    background: #ffffff;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.header-btn:hover {
+    background: #B0E0E6;
+}
+
+.todo-nmbr {
+    font-size: 18px;
+    color: cornsilk;
+}
