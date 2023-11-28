@@ -112,7 +112,7 @@ const TodoApp = () => {
                 }}
             >
                 {todoArray.map((todo, index) => (
-                    <Todo key={index} todo={todo.text} index={index} />
+                    <Todo key={index} todo={todo} index={index} />
                 ))}
             </ul>
         </div>
