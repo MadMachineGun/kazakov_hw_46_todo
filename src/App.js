@@ -1,5 +1,5 @@
 import Header from './components/MainHeader/Header';
-import TodoApp from './components/ToDo/TodoApp';
+import TodoApp from './components/ToDo';
 
 function App() {
 
@@ -14,7 +14,3 @@ function App() {
 }
 
 export default App;
-
-Todo.js
-
-
