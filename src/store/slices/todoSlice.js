@@ -47,7 +47,7 @@ const todoSlice = createSlice({
         },
         [fetchTodos.fulfilled]: (state, action) => {
 
-            state.todoArray = action.payload.slice(0, 10);
+            state.todoArray = action.payload.slice(0, 10).map(todo => ({...todo,completed: false}));
             state.loading = false;
         },
         [fetchTodos.rejected]: (state, action) => {
