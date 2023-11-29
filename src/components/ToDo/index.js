@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {addTodo, fetchTodos, selectAllTodos, deleteSelectedTodos} from '../../store/slices/todoSlice';
+import {addTodo, fetchTodos, selectAllTodos, deleteSelectedTodosLocally} from '../../store/slices/todoSlice';
 
 import Todo from './Todo';
 
@@ -28,7 +28,7 @@ const TodoApp = () => {
     };
 
     const handleDeleteSelected = () => {
-        dispatch(deleteSelectedTodos());
+        dispatch(deleteSelectedTodosLocally());
     };
 
     return (
