@@ -1,11 +1,11 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { removeTodo, toggleTodo } from '../../store/slices/todoSlice';
 
 const Todo = ({ todo, index }) => {
   const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(todo.selected);
 
   const handleRemove = (e) => {
     e.stopPropagation();
@@ -14,6 +14,7 @@ const Todo = ({ todo, index }) => {
 
   const toggleSelectedTodo = () => {
     dispatch(toggleTodo(index));
+    setIsChecked(!isChecked);
   };
 
   return (
@@ -21,7 +22,11 @@ const Todo = ({ todo, index }) => {
           style={{ textDecoration: todo.completed ? 'line-through' : 'none', marginBottom: '10px' }}
           onClick={toggleSelectedTodo}
       >
-        <input type='checkbox' checked={todo.completed} readOnly />
+        <input
+            type='checkbox'
+            checked={isChecked || todo.completed}
+            readOnly
+        />
         {todo.title || todo.text}
         <button onClick={handleRemove}>Delete</button>
       </li>
@@ -29,3 +34,4 @@ const Todo = ({ todo, index }) => {
 };
 
 export default Todo;
+

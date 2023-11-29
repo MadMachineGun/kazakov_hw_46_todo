@@ -31,6 +31,7 @@ export default function Header() {
             <input
               type='text'
               value={newName}
+              placeholder='Enter your Name'
               onChange={(e) => setNewName(e.target.value)}
             />
             <button className='header-btn' onClick={onChangeName}>OK</button>
