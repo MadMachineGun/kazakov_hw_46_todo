@@ -5,6 +5,7 @@ import {addTodo, fetchTodos, selectAllTodos, deleteSelectedTodosLocally} from '.
 
 import Todo from './Todo';
 
+
 const TodoApp = () => {
     const dispatch = useDispatch();
 
