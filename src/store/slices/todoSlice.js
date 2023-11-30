@@ -1,9 +1,8 @@
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchTodos = createAsyncThunk(
     'todos/fetchTodos',
-    async function (_, { rejectWithValue }) {
+    async function (_, { rejectWithValue, dispatch }) {
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/todos');
             const data = await response.json();
@@ -12,11 +11,15 @@ export const fetchTodos = createAsyncThunk(
                 throw new Error('Something went wrong....');
             }
 
-            data.forEach((todo) => {
-                console.log('Todo:', todo);
-            });
+            const todosWithStatusFalse = data.map((todo) => ({
+                ...todo,
+                completed: false,
+                selected: false,
+            }));
 
-            return data;
+            dispatch(toggleSelectAll(todosWithStatusFalse));
+
+            return todosWithStatusFalse;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -41,16 +44,7 @@ export const selectAllTodos = createAsyncThunk(
 
 export const deleteSelectedTodosLocally = () => (dispatch, getState) => {
     const { todos } = getState();
-    const selectedTodos = todos.todoArray.filter((todo) => todo.selected);
-
-    // Добавим обработку удаления выбранных тудушек
-    selectedTodos.forEach((todo) => {
-        console.log('Deleting selected todo:', todo);
-        // Добавьте свою логику удаления выбранных тудушек здесь
-        // Например, можно использовать splice для удаления по индексу
-        // const index = todos.todoArray.findIndex((t) => t.id === todo.id);
-        // todos.todoArray.splice(index, 1);
-    });
+    const selectedIds = todos.todoArray.filter((todo) => todo.selected).map((todo) => todo.id);
 
     const updatedTodos = todos.todoArray.filter((todo) => !todo.selected);
 
@@ -66,14 +60,14 @@ const todoSlice = createSlice({
     },
     reducers: {
         addTodo: (state, action) => {
-            state.todoArray.push({ text: action.payload, completed: false, selected: false });
+            state.todoArray.push({ ...action.payload, selected: false });
         },
         removeTodo: (state, action) => {
-            state.todoArray = state.todoArray.filter((todo, index) => index !== action.payload);
+            state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);
         },
         toggleTodo: (state, action) => {
-            state.todoArray = state.todoArray.map((todo, index) =>
-                index === action.payload ? { ...todo, completed: !todo.completed } : todo
+            state.todoArray = state.todoArray.map((todo) =>
+                todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo
             );
         },
         toggleSelectAll: (state, action) => {
@@ -85,11 +79,7 @@ const todoSlice = createSlice({
             state.loading = true;
         },
         [fetchTodos.fulfilled]: (state, action) => {
-            state.todoArray = action.payload.slice(0, 10).map((todo) => ({
-                ...todo,
-                completed: false,
-                selected: false,
-            }));
+            state.todoArray = action.payload;
             state.loading = false;
         },
         [fetchTodos.rejected]: (state, action) => {

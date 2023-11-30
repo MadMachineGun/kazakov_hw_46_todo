@@ -1,72 +1,3 @@
-// import React, {useState, useEffect} from 'react';
-// import {useSelector, useDispatch} from 'react-redux';
-//
-// import {addTodo, fetchTodos, selectAllTodos, deleteSelectedTodosLocally} from '../../store/slices/todoSlice';
-//
-// import Todo from './Todo';
-//
-//
-// const TodoApp = () => {
-//     const dispatch = useDispatch();
-//
-//     const {loading, error, todoArray} = useSelector((state) => state.todos);
-//
-//     const [newTodo, setNewTodo] = useState('');
-//
-//     useEffect(() => {
-//         dispatch(fetchTodos());
-//     }, [dispatch]);
-//
-//     const addNewTodo = () => {
-//         if (newTodo.trim() !== '') {
-//             dispatch(addTodo(newTodo));
-//             setNewTodo('');
-//         }
-//     };
-//
-//     const handleSelectAll = () => {
-//         dispatch(selectAllTodos());
-//     };
-//
-//     const handleDeleteSelected = () => {
-//         dispatch(deleteSelectedTodosLocally());
-//     };
-//
-//     return (
-//         <div>
-//             <h1>Todo List</h1>
-//             <input type="checkbox" onChange={handleSelectAll}/>
-//             <input
-//                 type="text"
-//                 value={newTodo}
-//                 onChange={(e) => setNewTodo(e.target.value)}
-//                 placeholder="Enter a new todo"
-//             />
-//             <button onClick={addNewTodo}>Add Todo</button>
-//
-//             {loading && <h3>Loading....</h3>}
-//             {error && <h3>{error}</h3>}
-//
-//             <ul
-//                 style={{
-//                     marginTop: '20px',
-//                     display: 'flex',
-//                     flexDirection: 'column',
-//                     alignItems: 'flex-start',
-//                     justifyContent: 'center',
-//                 }}
-//             >
-//                 {todoArray.map((todo, index) => (
-//                     <Todo key={index} todo={todo} index={index}/>
-//                 ))}
-//             </ul>
-//             <button className='del-selected' onClick={handleDeleteSelected}>Delete Selected</button>
-//         </div>
-//     );
-// };
-//
-// export default TodoApp;
-
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -76,6 +7,7 @@ import {
     selectAllTodos,
     deleteSelectedTodosLocally,
     removeTodo,
+    toggleSelectAll,
 } from '../../store/slices/todoSlice';
 
 import Todo from './Todo';
@@ -86,6 +18,7 @@ const TodoApp = () => {
     const { loading, error, todoArray } = useSelector((state) => state.todos);
 
     const [newTodo, setNewTodo] = useState('');
+    const [selectedTodos, setSelectedTodos] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
 
     useEffect(() => {
@@ -94,25 +27,49 @@ const TodoApp = () => {
 
     const addNewTodo = () => {
         if (newTodo.trim() !== '') {
-            dispatch(addTodo(newTodo));
+            const newTodoObject = {
+                text: newTodo,
+                completed: false,
+                selected: false,
+            };
+
+            dispatch(addTodo(newTodoObject));
             setNewTodo('');
         }
     };
 
     const handleSelectAll = () => {
+        const allTodoIds = todoArray.map((todo) => todo.id);
+
+        if (!selectAll) {
+            setSelectedTodos(allTodoIds);
+        } else {
+            setSelectedTodos([]);
+        }
+
         setSelectAll((prev) => !prev);
         dispatch(selectAllTodos());
     };
 
-    const handleDeleteSelected = () => {
-        const selectedTodos = todoArray.filter((todo) => todo.selected);
+    const toggleSelectedTodo = (todo) => {
+        setSelectedTodos((prevSelectedTodos) => {
+            if (prevSelectedTodos.includes(todo.id)) {
+                return prevSelectedTodos.filter((id) => id !== todo.id);
+            } else {
+                return [...prevSelectedTodos, todo.id];
+            }
+        });
 
-        selectedTodos.forEach((todo) => {
-            dispatch(removeTodo(todo.id));
+        dispatch(selectAllTodos());
+    };
+
+    const handleDeleteSelected = () => {
+        selectedTodos.forEach((id) => {
+            dispatch(removeTodo(id));
         });
 
         dispatch(deleteSelectedTodosLocally());
-        setSelectAll(false);
+        setSelectedTodos([]);
     };
 
     return (
@@ -126,6 +83,7 @@ const TodoApp = () => {
                 placeholder="Enter a new todo"
             />
             <button onClick={addNewTodo}>Add Todo</button>
+            <button onClick={handleDeleteSelected}>Delete Selected</button>
 
             {loading && <h3>Loading....</h3>}
             {error && <h3>{error}</h3>}
@@ -139,15 +97,24 @@ const TodoApp = () => {
                     justifyContent: 'center',
                 }}
             >
-                {todoArray.map((todo, index) => (
-                    <Todo key={index} todo={todo} index={index} />
+                {todoArray.map((todo) => (
+                    <Todo
+                        key={todo.id}
+                        todo={todo}
+                        isSelected={selectedTodos.includes(todo.id)}
+                        toggleSelected={() => toggleSelectedTodo(todo)}
+                    />
                 ))}
             </ul>
-            <button className='del-selected' onClick={handleDeleteSelected}>
-                Delete Selected
-            </button>
         </div>
     );
 };
 
 export default TodoApp;
+
+
+
+
+
+
+

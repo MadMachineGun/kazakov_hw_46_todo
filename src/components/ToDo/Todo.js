@@ -1,68 +1,41 @@
-// import React, { useState } from 'react';
-// import { useDispatch } from 'react-redux';
-//
-// import { removeTodo, toggleTodo } from '../../store/slices/todoSlice';
-//
-// const Todo = ({ todo, index }) => {
-//   const dispatch = useDispatch();
-//   const [isChecked, setIsChecked] = useState(todo.selected);
-//
-//   const handleRemove = (e) => {
-//     e.stopPropagation();
-//     dispatch(removeTodo(index));
-//   };
-//
-//   const toggleSelectedTodo = () => {
-//     dispatch(toggleTodo(index));
-//     setIsChecked(!isChecked);
-//   };
-//
-//   return (
-//       <li
-//           style={{ textDecoration: todo.completed ? 'line-through' : 'none', marginBottom: '10px' }}
-//           onClick={toggleSelectedTodo}
-//       >
-//         <input
-//             type='checkbox'
-//             checked={isChecked || todo.completed}
-//             readOnly
-//         />
-//         {todo.title || todo.text}
-//         <button onClick={handleRemove}>Delete</button>
-//       </li>
-//   );
-// };
-//
-// export default Todo;
-//
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { removeTodo, toggleTodo } from '../../store/slices/todoSlice';
+import { removeTodo, selectAllTodos } from '../../store/slices/todoSlice';
 
-const Todo = ({ todo, index }) => {
+const Todo = ({ todo, isSelected, toggleSelected }) => {
   const dispatch = useDispatch();
-  const [isChecked, setIsChecked] = useState(todo.selected);
+  const [isChecked, setIsChecked] = useState(isSelected);
 
   useEffect(() => {
-    setIsChecked(todo.selected);
-  }, [todo.selected]);
+    setIsChecked(isSelected);
+  }, [isSelected]);
 
   const handleRemove = (e) => {
     e.stopPropagation();
     dispatch(removeTodo(todo.id));
+    toggleSelected();
+    dispatch(selectAllTodos());
   };
 
   const toggleSelectedTodo = () => {
-    dispatch(toggleTodo(index));
+    toggleSelected();
+    setIsChecked((prev) => !prev);
+    dispatch(selectAllTodos());
   };
 
   return (
       <li
-          style={{ textDecoration: todo.completed ? 'line-through' : 'none', marginBottom: '10px' }}
-          onClick={toggleSelectedTodo}
+          style={{
+            textDecoration: isChecked ? 'line-through' : 'none',
+            marginBottom: '10px',
+          }}
       >
-        <input type='checkbox' checked={isChecked} onChange={() => {}} />
+        <input
+            type='checkbox'
+            checked={isChecked}
+            onChange={toggleSelectedTodo}
+        />
         {todo.title || todo.text}
         <button onClick={handleRemove}>Delete</button>
       </li>
@@ -70,3 +43,5 @@ const Todo = ({ todo, index }) => {
 };
 
 export default Todo;
+
+
