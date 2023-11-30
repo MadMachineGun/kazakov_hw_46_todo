@@ -49,7 +49,7 @@ const TodoApp = () => {
 
             <ul
                 style={{
-                    marginLeft: '1em',
+                    // marginLeft: '1em',
                     marginTop: '20px',
                     display: 'flex',
                     flexDirection: 'column',
