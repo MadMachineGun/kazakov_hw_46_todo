@@ -7,7 +7,7 @@ import {
     selectAllTodos,
     deleteSelectedTodosLocally,
     removeTodo,
-    toggleSelectAll,
+    // toggleSelectAll,
 } from '../../store/slices/todoSlice';
 
 import Todo from './Todo';
