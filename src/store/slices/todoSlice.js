@@ -1,9 +1,11 @@
-
+// src/store/slices/todoSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchTodos = createAsyncThunk(
     'todos/fetchTodos',
-    async function (_, { rejectWithValue, dispatch }) {
+    async function (_, { rejectWithValue
+
+        , dispatch }) {
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/todos');
             const data = await response.json();
@@ -36,7 +38,7 @@ export const selectAllTodos = createAsyncThunk(
         const updatedTodos = todos.todoArray.map((todo) => ({
             ...todo,
             completed: !allCompleted,
-            selected: !allCompleted && todo.selected, // Keep selected as it is for individually added todos
+            selected: !allCompleted && todo.selected,
         }));
 
         dispatch(toggleSelectAll(updatedTodos));
@@ -60,7 +62,7 @@ const todoSlice = createSlice({
     },
     reducers: {
         addTodo: (state, action) => {
-            state.todoArray.unshift({ ...action.payload, selected: false }); // unshift to add at the beginning
+            state.todoArray.unshift({ ...action.payload, selected: false });
         },
         removeTodo: (state, action) => {
             state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);
@@ -92,3 +94,4 @@ const todoSlice = createSlice({
 export const { addTodo, removeTodo, toggleTodo, toggleSelectAll } = todoSlice.actions;
 
 export default todoSlice.reducer;
+

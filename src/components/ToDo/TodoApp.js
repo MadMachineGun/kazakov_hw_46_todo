@@ -1,3 +1,4 @@
+// src/components/ToDo/TodoApp.js
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -66,12 +67,12 @@ const TodoApp = () => {
     };
 
     const handleDeleteSelected = () => {
-        dispatch(selectAllTodos()); // Обновление состояния "выбранности"
+        dispatch(selectAllTodos());
         selectedTodos.forEach((id) => {
             dispatch(removeTodo(id));
         });
 
-        dispatch(deleteSelectedTodosLocally(selectedTodos)); // Передайте выбранные тудушки для удаления
+        dispatch(deleteSelectedTodosLocally(selectedTodos));
         setSelectedTodos([]);
     };
 
@@ -120,7 +121,7 @@ const TodoApp = () => {
                 ))}
             </ul>
 
-            <div style={{ marginTop: '10px' }}>
+            <div className='page_numbers' style={{ marginTop: '5px' }}>
                 {Array.from({ length: totalPages }, (_, index) => (
                     <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
                         {index + 1}
@@ -132,4 +133,5 @@ const TodoApp = () => {
 };
 
 export default TodoApp;
+
 
