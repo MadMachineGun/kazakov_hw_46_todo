@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -43,5 +44,4 @@ const Todo = ({ todo, isSelected, toggleSelected }) => {
 };
 
 export default Todo;
-
 

@@ -1,3 +1,4 @@
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchTodos = createAsyncThunk(
@@ -35,18 +36,17 @@ export const selectAllTodos = createAsyncThunk(
         const updatedTodos = todos.todoArray.map((todo) => ({
             ...todo,
             completed: !allCompleted,
-            selected: !allCompleted,
+            selected: !allCompleted && todo.selected, // Keep selected as it is for individually added todos
         }));
 
         dispatch(toggleSelectAll(updatedTodos));
     }
 );
 
-export const deleteSelectedTodosLocally = () => (dispatch, getState) => {
+export const deleteSelectedTodosLocally = (selectedIds) => (dispatch, getState) => {
     const { todos } = getState();
-    const selectedIds = todos.todoArray.filter((todo) => todo.selected).map((todo) => todo.id);
 
-    const updatedTodos = todos.todoArray.filter((todo) => !todo.selected);
+    const updatedTodos = todos.todoArray.filter((todo) => !selectedIds.includes(todo.id));
 
     dispatch(toggleSelectAll(updatedTodos));
 };
@@ -60,7 +60,7 @@ const todoSlice = createSlice({
     },
     reducers: {
         addTodo: (state, action) => {
-            state.todoArray.push({ ...action.payload, selected: false });
+            state.todoArray.unshift({ ...action.payload, selected: false }); // unshift to add at the beginning
         },
         removeTodo: (state, action) => {
             state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);

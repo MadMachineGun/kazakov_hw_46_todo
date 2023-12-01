@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -7,7 +8,6 @@ import {
     selectAllTodos,
     deleteSelectedTodosLocally,
     removeTodo,
-    // toggleSelectAll,
 } from '../../store/slices/todoSlice';
 
 import Todo from './Todo';
@@ -20,6 +20,8 @@ const TodoApp = () => {
     const [newTodo, setNewTodo] = useState('');
     const [selectedTodos, setSelectedTodos] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const todosPerPage = 10;
 
     useEffect(() => {
         dispatch(fetchTodos());
@@ -64,12 +66,23 @@ const TodoApp = () => {
     };
 
     const handleDeleteSelected = () => {
+        dispatch(selectAllTodos()); // Обновление состояния "выбранности"
         selectedTodos.forEach((id) => {
             dispatch(removeTodo(id));
         });
 
-        dispatch(deleteSelectedTodosLocally());
+        dispatch(deleteSelectedTodosLocally(selectedTodos)); // Передайте выбранные тудушки для удаления
         setSelectedTodos([]);
+    };
+
+    const indexOfLastTodo = currentPage * todosPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+    const currentTodos = todoArray.slice(indexOfFirstTodo, indexOfLastTodo);
+
+    const totalPages = Math.ceil(todoArray.length / todosPerPage);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -97,7 +110,7 @@ const TodoApp = () => {
                     justifyContent: 'center',
                 }}
             >
-                {todoArray.map((todo) => (
+                {currentTodos.map((todo) => (
                     <Todo
                         key={todo.id}
                         todo={todo}
@@ -106,15 +119,17 @@ const TodoApp = () => {
                     />
                 ))}
             </ul>
+
+            <div style={{ marginTop: '10px' }}>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
 
 export default TodoApp;
-
-
-
-
-
-
 
