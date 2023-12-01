@@ -1,17 +1,15 @@
-// src/store/slices/todoSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchTodos = createAsyncThunk(
     'todos/fetchTodos',
-    async function (_, { rejectWithValue
-
-        , dispatch }) {
+    async function (_, { rejectWithValue, dispatch }) {
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/todos');
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error('Something went wrong....');
+                return rejectWithValue('Something went wrong....');
             }
 
             const todosWithStatusFalse = data.map((todo) => ({
@@ -28,7 +26,6 @@ export const fetchTodos = createAsyncThunk(
         }
     }
 );
-
 export const selectAllTodos = createAsyncThunk(
     'todos/selectAllTodos',
     (_, { getState, dispatch }) => {
@@ -67,11 +64,7 @@ const todoSlice = createSlice({
         removeTodo: (state, action) => {
             state.todoArray = state.todoArray.filter((todo) => todo.id !== action.payload);
         },
-        toggleTodo: (state, action) => {
-            state.todoArray = state.todoArray.map((todo) =>
-                todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo
-            );
-        },
+        // Removed toggleTodo from here
         toggleSelectAll: (state, action) => {
             state.todoArray = action.payload;
         },
@@ -91,7 +84,6 @@ const todoSlice = createSlice({
     },
 });
 
-export const { addTodo, removeTodo, toggleTodo, toggleSelectAll } = todoSlice.actions;
+export const { addTodo, removeTodo, toggleSelectAll } = todoSlice.actions;
 
 export default todoSlice.reducer;
-
